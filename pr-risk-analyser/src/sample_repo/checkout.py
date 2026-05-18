@@ -1,4 +1,4 @@
-from pricing import calculate_total
+from src.sample_repo.pricing import calculate_total
 
 
 def checkout(amount):
