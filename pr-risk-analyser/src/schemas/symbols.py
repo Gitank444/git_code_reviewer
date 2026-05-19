@@ -26,6 +26,11 @@ class RiskResult:
     severity: str
     reasons: list[str] = field(default_factory=list)
     
+
+@dataclass
+class CircularDependency:
+    cycle: list[str]
+    
         
 @dataclass
 class AnalysisResult:
@@ -34,4 +39,5 @@ class AnalysisResult:
     downstream_functions: list[str]
     risk_result: RiskResult
     violations: list[ArchitectureViolation]
+    cycles: list[CircularDependency]
     

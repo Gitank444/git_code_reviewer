@@ -7,9 +7,10 @@ from src.scorer.risk_scorer import RiskScorer
 from src.rules.architecture_rules import (
     ArchitectureRuleEngine
 )
-
 from src.schemas.symbols import AnalysisResult
-
+from src.graphs.cycle_detector import (
+    CycleDetector
+)
 
 class PRAnalysisPipeline:
 
@@ -20,6 +21,8 @@ class PRAnalysisPipeline:
         self.risk_scorer = RiskScorer()
 
         self.rule_engine = ArchitectureRuleEngine()
+        
+        self.cycle_detector = CycleDetector()
 
     def run(
         self,
@@ -79,11 +82,16 @@ class PRAnalysisPipeline:
                 self.import_graph.graph
             )
         )
-
+         
+        # STEP 7 — Cycle detection
+        cycles = self.cycle_detector.detect_cycles(
+          self.import_graph.graph
+        ) 
         return AnalysisResult(
             file_analyses=file_analyses,
             affected_modules=affected_modules,
             downstream_functions=downstream_functions,
             risk_result=risk_result,
-            violations=violations
+            violations=violations,
+            cycles=cycles
         )

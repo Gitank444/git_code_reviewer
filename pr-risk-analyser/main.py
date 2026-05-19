@@ -46,3 +46,15 @@ if not result.violations:
 else:
     for violation in result.violations:
         print(f" - {violation.message}")
+
+print("\n===== CIRCULAR DEPENDENCY ANALYSIS =====")
+
+if not result.cycles:
+    print("No circular dependencies detected")
+
+else:
+    for cycle in result.cycles:
+
+        cycle_path = " -> ".join(cycle.cycle)
+
+        print(f" - {cycle_path}")
