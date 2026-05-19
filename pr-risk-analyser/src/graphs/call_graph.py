@@ -36,4 +36,4 @@ class CallGraph:
 
         dfs(function_name)
 
-        return downstream
+        return downstream 

@@ -3,9 +3,6 @@ from pathlib import Path
 
 from src.schemas.symbols import FileAnalysis, FunctionSymbol
 
-
-
-
 class CodeVisitor(ast.NodeVisitor):
     def __init__(self):
         self.imports = []
