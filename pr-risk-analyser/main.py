@@ -1,49 +1,48 @@
-from pathlib import Path
+from src.orchestrator.pipeline import (
+    PRAnalysisPipeline
+)
 
-from src.parser.ast_parser import analyze_file
-from src.graphs.import_graph import ImportGraph
-from src.graphs.call_graph import CallGraph
-repo_path = Path("src/sample_repo")
 
-python_files = repo_path.glob("*.py")
+pipeline = PRAnalysisPipeline()
 
-graph = ImportGraph()
-call_graph = CallGraph()
+result = pipeline.run(
+    repo_path="src/sample_repo",
+    changed_module="pricing",
+    changed_function="calculate_total"
+)
 
-for file in python_files:
-    result = analyze_file(file)
+print("\n===== BLAST RADIUS =====")
 
-    print("\n====================")
-    print(f"FILE: {result.file_path}")
+for module in result.affected_modules:
+    print(f" - {module}")
 
-    print("\nImports:")
-    for imp in result.imports:
-        print(f" - {imp}")
+print("\n===== FUNCTION IMPACT =====")
 
-    print("\nFunctions:")
-    for func in result.functions:
-        print(f" - {func.name}")
-        print(f"   Calls: {func.calls}")
+for function in result.downstream_functions:
+    print(f" - {function}")
 
-    graph.add_file_analysis(result)
-    call_graph.add_file_analysis(result)
+print("\n===== RISK ANALYSIS =====")
 
-graph.show_dependencies()
+print(
+    f"Risk Score: "
+    f"{result.risk_result.score}/100"
+)
 
-print("\n===== BLAST RADIUS ANALYSIS =====")
-print("If pricing changes:")
+print(
+    f"Severity: "
+    f"{result.risk_result.severity}"
+)
 
-dependents = graph.get_all_dependents("pricing")
+print("\nReasons:")
 
-for dep in dependents:
-    print(f" - {dep} may be affected")
+for reason in result.risk_result.reasons:
+    print(f" - {reason}")
 
-call_graph.show_graph()
+print("\n===== ARCHITECTURE VIOLATIONS =====")
 
-print("\n===== FUNCTION IMPACT ANALYSIS =====")
-print("If calculate_total changes:")
+if not result.violations:
+    print("No violations detected")
 
-downstream = call_graph.get_downstream_calls("calculate_total")
-
-for func in downstream:
-    print(f" - {func} may be affected")
+else:
+    for violation in result.violations:
+        print(f" - {violation.message}")
