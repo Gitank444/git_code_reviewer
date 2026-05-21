@@ -1,3 +1,4 @@
+from html import parser
 from pathlib import Path
 
 from src.parser.ast_parser import analyze_file
@@ -15,7 +16,36 @@ from src.diff.pr_diff_analyzer import (
     PRDiffAnalyzer
 )
 
+# this diff text will be given by the github api in the real implementation, here we hardcode it for testing purposes
+diff_text = """
++from pricing import calculate_total
+
++def risky_checkout():
++     pass
+
+-def old_checkout():
+-     pass
+"""
+
+diff_result = parser.parse_diff(
+    diff_text
+)
 class PRAnalysisPipeline:
+    
+    diff_text = """
++from pricing import calculate_total
+
++def risky_checkout():
++     pass
+
+-def old_checkout():
+-     pass
+"""
+
+    diff_result = parser.parse_diff(
+    diff_text
+)
+
 
     def __init__(self):
         self.import_graph = ImportGraph()
@@ -34,7 +64,7 @@ class PRAnalysisPipeline:
     self,
     repo_path: str,
     changed_files: list[str],
-) -> AnalysisResult:
+    ) -> AnalysisResult:
         
 
         repo = Path(repo_path)
@@ -88,20 +118,24 @@ class PRAnalysisPipeline:
 
     # STEP 5 — Function impact
     # TEMPORARY
-        downstream_functions = (
-        self.call_graph.get_downstream_calls(
-            "calculate_total"
-        )
-    )
+        downstream_functions = []
+        changed_functions = diff_result["changed_functions"]
+        
+        for function in changed_functions:
+            results=self.call_graph.get_downstream_calls(function)
+            downstream_functions.extend(results)
+            
+    
 
     # STEP 6 — Risk scoring
         risk_result = (
-        self.risk_scorer.calculate_risk(
-            changed_module=changed_modules[0],
+            self.risk_scorer.calculate_risk(
+            changed_module = changed_modules[0] if changed_modules else None,
+            #changed_module=changed_module,
             affected_modules=affected_modules,
             downstream_functions=downstream_functions
         )
-    )
+        )
 
     # STEP 7 — Architecture validation
         violations = (
@@ -125,3 +159,5 @@ class PRAnalysisPipeline:
         violations=violations,
         cycles=cycles
     )
+        
+    
