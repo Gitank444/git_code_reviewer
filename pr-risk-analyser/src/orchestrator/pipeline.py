@@ -15,6 +15,12 @@ from src.graphs.cycle_detector import (
 from src.diff.pr_diff_analyzer import (
     PRDiffAnalyzer
 )
+from src.diff.github_pr_fetcher import(
+    GitHubPRFetcher
+)
+from src.diff.git_diff_parser import (
+    GitDiffParser
+)
 
 # this diff text will be given by the github api in the real implementation, here we hardcode it for testing purposes
 diff_text = """
@@ -60,18 +66,38 @@ class PRAnalysisPipeline:
         
         self.diff_analyzer = PRDiffAnalyzer()
         
+        
+        
+    def run_from_github_pr(self,owner,repo,pr_number,token,repo_path):
+        
+        fetcher=GitHubPRFetcher(token)
+        files= fetcher.get_pr_files(owner,repo,pr_number)
+        diff_text=fetcher.get_diff_text(files)
+        parser = GitDiffParser()
+        diff_result = parser.parse_diff(diff_text)
+        
+        changed_files = []
+        for file in files:
+            if file is not None:
+                result=file["filename"]
+                changed_files.append(result)
+        return self.run(
+            repo_path,
+            changed_files
+        )
+
     def run(
     self,
     repo_path: str,
     changed_files: list[str],
     ) -> AnalysisResult:
         
-
+        
         repo = Path(repo_path)
 
         file_analyses = []
 
-        python_files = repo.glob("*.py")
+        python_files = repo.rglob("*.py")
 
     # STEP 1 — Parse files
         for file in python_files:
