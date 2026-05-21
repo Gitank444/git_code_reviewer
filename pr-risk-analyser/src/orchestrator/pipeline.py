@@ -1,6 +1,4 @@
-from html import parser
 from pathlib import Path
-
 from src.parser.ast_parser import analyze_file
 from src.graphs.import_graph import ImportGraph
 from src.graphs.call_graph import CallGraph
@@ -32,26 +30,14 @@ diff_text = """
 -def old_checkout():
 -     pass
 """
-
-diff_result = parser.parse_diff(
-    diff_text
-)
-class PRAnalysisPipeline:
+diff_parser = GitDiffParser()
+diff_result = diff_parser.parse_diff(diff_text)
+# diff_result = diff_parser.parse_diff(diff_text)
     
-    diff_text = """
-+from pricing import calculate_total
 
-+def risky_checkout():
-+     pass
 
--def old_checkout():
--     pass
-"""
 
-    diff_result = parser.parse_diff(
-    diff_text
-)
-
+class PRAnalysisPipeline:
 
     def __init__(self):
         self.import_graph = ImportGraph()
@@ -66,30 +52,34 @@ class PRAnalysisPipeline:
         
         self.diff_analyzer = PRDiffAnalyzer()
         
+    diff_parser = GitDiffParser()
+    diff_result = diff_parser.parse_diff(diff_text)
+    # diff_result = diff_parser.parse_diff(diff_text)
+    
         
+    # def run_from_github_pr(self,owner,repo,pr_number,token,repo_path):
         
-    def run_from_github_pr(self,owner,repo,pr_number,token,repo_path):
+    #     fetcher=GitHubPRFetcher(token)
+    #     files= fetcher.get_pr_files(owner,repo,pr_number)
+    #     diff_text=fetcher.get_diff_text(files)
+    #     parser = GitDiffParser()
+    #     diff_result = parser.parse_diff(diff_text)
         
-        fetcher=GitHubPRFetcher(token)
-        files= fetcher.get_pr_files(owner,repo,pr_number)
-        diff_text=fetcher.get_diff_text(files)
-        parser = GitDiffParser()
-        diff_result = parser.parse_diff(diff_text)
+    #     changed_files = []
+    #     # changed_files = [file for file in files if file]
+    #     for file in files:
+    #         if file is not None:
+    #             changed_files.append(file)
+    #     return self.run(repo_path,
+    #                     changed_files,
+    #                     diff_result)
+                
         
-        changed_files = []
-        for file in files:
-            if file is not None:
-                result=file["filename"]
-                changed_files.append(result)
-        return self.run(
-            repo_path,
-            changed_files
-        )
 
     def run(
     self,
     repo_path: str,
-    changed_files: list[str],
+    changed_files: list[str]
     ) -> AnalysisResult:
         
         

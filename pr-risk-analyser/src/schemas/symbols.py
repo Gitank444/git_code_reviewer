@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-
+from pydantic import BaseModel
 
 @dataclass
 class FunctionSymbol:
@@ -41,3 +41,12 @@ class AnalysisResult:
     violations: list[ArchitectureViolation]
     cycles: list[CircularDependency]
     
+@dataclass
+class PRFile(BaseModel):
+    filename: str
+    patch: str
+    status: str
+
+class DiffAnalysis(BaseModel):
+    changed_functions: list[str]
+    added_imports: list[str]

@@ -1,9 +1,5 @@
-from analytics import track_revenue
+def calculate_total(items):
+    return sum(item["price"] for item in items)
 
-def calculate_tax(amount):
-    return amount * 0.18
-
-
-def calculate_total(amount):
-    tax = calculate_tax(amount)
-    return amount + tax
+def apply_discount(total, discount):
+    return total - discount

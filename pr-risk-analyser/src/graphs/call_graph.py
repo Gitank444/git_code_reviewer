@@ -1,7 +1,6 @@
 import networkx as nx
-
 from src.schemas.symbols import FileAnalysis
-import matplotlib.pyplot as plt
+
 
 class CallGraph:
     def __init__(self):
@@ -24,6 +23,9 @@ class CallGraph:
             print(f"{source} ---> {target}")
 
     def get_downstream_calls(self, function_name: str):
+        if function_name not in self.graph:
+            return []
+        
         visited = set()
         downstream = []
 
@@ -37,26 +39,4 @@ class CallGraph:
         dfs(function_name)
 
         return downstream 
-    
-    def draw_graph(self):
-        
-        plt.figure(figsize=(10, 7))
-
-        pos = nx.spring_layout(self.graph)
-
-        nx.draw(
-        self.graph,
-        pos,
-        with_labels=True,
-        node_size=3000,
-        node_color="lightblue",
-        font_size=10,
-        font_weight="bold",
-        arrows=True
-        )
-
-        plt.title("Function Call Graph")
-
-        plt.show()
-     
     

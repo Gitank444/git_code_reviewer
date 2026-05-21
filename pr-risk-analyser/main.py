@@ -8,14 +8,17 @@ edge_analyzer = EdgeAnalyzer()
 rule_engine = ArchitectureRuleEngine()
 
 # Run against real GitHub PR
-result = pipeline.run_from_github_pr(
+# result = pipeline.run_from_github_pr(
     
-    owner="",       # example: "torvalds"
-    repo="",        # example: "linux"
-    pr_number=,     # example: 42
-    token="",       # your GitHub token
-    repo_path=""    # example: "C:/Users/Gitank/projects/linux"
-    
+#     owner="",       # example: "torvalds"
+#     repo="",        # example: "linux"
+#     pr_number=42,     # example: 42
+#     token="",       # your GitHub token
+#     repo_path=""    # example: "C:/Users/Gitank/projects/linux"
+# )
+result = pipeline.run(
+    repo_path="src/sample_repo",
+    changed_files=["src/sample_repo/pricing.py"]
 )
 
 print("\n===== BLAST RADIUS =====")
@@ -46,3 +49,4 @@ if not result.cycles:
 else:
     for cycle in result.cycles:
         print(f" - {' -> '.join(cycle.cycle)}")
+
