@@ -7,18 +7,14 @@ pipeline = PRAnalysisPipeline()
 edge_analyzer = EdgeAnalyzer()
 rule_engine = ArchitectureRuleEngine()
 
-# Run against real GitHub PR
-# result = pipeline.run_from_github_pr(
-    
-#     owner="",       # example: "torvalds"
-#     repo="",        # example: "linux"
-#     pr_number=42,     # example: 42
-#     token="",       # your GitHub token
-#     repo_path=""    # example: "C:/Users/Gitank/projects/linux"
-# )
-result = pipeline.run(
-    repo_path="src/sample_repo",
-    changed_files=["src/sample_repo/pricing.py"]
+
+result = pipeline.run_from_github_pr(
+    owner="fastapi",
+    repo="fastapi",
+    pr_number=15476,
+    token="ghp_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+    repo_path="C:/Users/Gitank/projects/fastapi"
+
 )
 
 print("\n===== BLAST RADIUS =====")

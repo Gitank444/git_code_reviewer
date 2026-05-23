@@ -33,12 +33,14 @@ class CodeVisitor(ast.NodeVisitor):
     # --------------------
     # Functions
     # --------------------
+    
+    
     def visit_FunctionDef(self, node):
         function_symbol = FunctionSymbol(
             name=node.name,
             calls=[]
         )
-
+        
         # single-pass traversal (NOT ast.walk)
         for child in ast.walk(node):
             if isinstance(child, ast.Call):
@@ -53,7 +55,8 @@ class CodeVisitor(ast.NodeVisitor):
 
         self.functions.append(function_symbol)
         self.generic_visit(node)
-
+        
+    visit_AsyncFunctionDef = visit_FunctionDef
 
 def analyze_file(file_path: Path) -> FileAnalysis:
     try:

@@ -25,7 +25,9 @@ class RiskResult:
     score: int
     severity: str
     reasons: list[str] = field(default_factory=list)
-    
+    core_affected: list[str] = field(default_factory=list)
+    test_affected: list[str] = field(default_factory=list)
+    other_affected: list[str] = field(default_factory=list)
 
 @dataclass
 class CircularDependency:
@@ -41,12 +43,13 @@ class AnalysisResult:
     violations: list[ArchitectureViolation]
     cycles: list[CircularDependency]
     
-@dataclass
+
 class PRFile(BaseModel):
     filename: str
     patch: str
     status: str
 
-class DiffAnalysis(BaseModel):
+@dataclass
+class DiffAnalysis:
     changed_functions: list[str]
     added_imports: list[str]
