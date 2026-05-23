@@ -25,3 +25,4 @@ Thumbs.db
 # GitHub token — never commit this
 secrets.py
 config.py
+.analysis_cache.json
